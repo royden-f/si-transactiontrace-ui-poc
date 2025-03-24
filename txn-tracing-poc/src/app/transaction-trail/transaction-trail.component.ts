@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import * as dayjs from 'dayjs';
 import { ICON_MAP, MODULE_MAP } from '../app.constants';
@@ -35,6 +35,9 @@ export class TransactionTrailComponent implements OnInit {
   events: EventItem[] = [];
   currentView: number = 1;
   showSearch = false;
+  requestDetails:any = []
+  responseDetails:any = []
+  errorDetails:any = []
   constructor(private _http: HttpClient, private _datePipe: DatePipe) {}
 
   ngOnInit(): void {}
@@ -113,6 +116,7 @@ export class TransactionTrailComponent implements OnInit {
             txnKey: txnResponse.txnKey,
             txnTimeTaken: timeTaken,
           };
+          this.getTransactionDetails(txnStartTime, this.transactionDetail.module);
           this.createTimelineEvents(txnResponse.txnTraces);
         }
       });
@@ -173,6 +177,33 @@ export class TransactionTrailComponent implements OnInit {
 
   openSearchModal() {
     this.showSearch = true;
+  }
 
+  getTransactionDetails(transactionTimeStamp: dayjs.Dayjs, module: string){
+    const request = {
+      startDateTime: transactionTimeStamp.startOf('day').format('YYYY-MM-DD HH:mm:ss.SSSSSS'),
+      endDateTime: transactionTimeStamp.endOf('day').format('YYYY-MM-DD HH:mm:ss.SSSSSS'),
+      logType: 'REQ',
+      key: 'si_txn_key',
+      value: this.siTxnKey
+    }
+    let options: any = {
+      observe: 'body',
+    };
+    options = { ...options, params: request || {} };
+    const reqDetails$ = this._http.get(`https://si-dashboard-svc-si-dev.apps.oscluster01.devtest.platformgainwell.com/api/v1/si/dashboard/${module.toLowerCase()}/details`, options);
+    request.logType = 'RES';
+    options = { ...options, params: request || {} };
+    const resDetails$ = this._http.get(`https://si-dashboard-svc-si-dev.apps.oscluster01.devtest.platformgainwell.com/api/v1/si/dashboard/${module.toLowerCase()}/details`, options);
+    request.logType = 'ERR';
+    options = { ...options, params: request || {} };
+    const errDetails$ = this._http.get(`https://si-dashboard-svc-si-dev.apps.oscluster01.devtest.platformgainwell.com/api/v1/si/dashboard/${module.toLowerCase()}/details`, options);
+
+    forkJoin([reqDetails$,resDetails$,errDetails$]).subscribe((response: any)=> {
+      const [reqDetails, resDetails, errDetails] = response;
+      this.requestDetails = reqDetails.data;
+      this.responseDetails = resDetails.data || [];
+      this.errorDetails = errDetails.data || [];
+    })
   }
 }

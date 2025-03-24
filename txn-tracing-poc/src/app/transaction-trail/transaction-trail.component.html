@@ -22,23 +22,146 @@
         <label for="siTxnKey" class="form-label mt-4">SI Transaction Key</label>
         <input type="email" class="form-control" id="siTxnKey" aria-describedby="siTxnKeyHelp"
           placeholder="Enter SI Transaction Key" [(ngModel)]="siTxnKey" name="siTxnKey">
-        <p class='ms-2'> <span>  Enter a transaction key or </span> <button class='btn btn-link p-0 text-info' type='button' (click)="openSearchModal()"> find a transaction </button> </p>
+        <p class='ms-2'> <span> Enter a transaction key or </span> <button class='btn btn-link p-0 text-info'
+            type='button' (click)="openSearchModal()"> find a transaction </button> </p>
       </div>
       <div class="col-md-4 mt-5 pt-1">
-        <button type="button" class="btn btn-info" (click)='onFindAction()'>FIND</button>
+        <button type="button" class="btn btn-primary" (click)='onFindAction()'>FIND</button>
       </div>
     </div>
   </fieldset>
 </form>
+
 <!-- <app-find-txn-modal *ngIf='showSearch'></app-find-txn-modal> -->
 <div class='d-flex'>
   <button type='button' (click)="switchView(1)" class='btn btn-link'> View 1</button>
   <button type='button' (click)="switchView(2)" class='btn btn-link'> View 2</button>
   <button type='button' (click)="switchView(3)" class='btn btn-link'> View 3</button>
 </div>
+<div class="row txn-details my-2 table-responsive" *ngIf='requestDetails.length'>
+  <h3>Request Details</h3>
+  <table class='table table-bordered table-responsive'>
+    <thead class='table-dark'>
+      <tr>
+        <th>Business Flow</th>
+        <th>Requestor System</th>
+        <th>Target System</th>
+        <th>Publisher System</th>
+        <th>Exchange Method</th>
+        <th>Create Timestamp</th>
+        <th>Log Type</th>
+        <th>SI Transaction Key</th>
+        <th>Mod Txn ID</th>
+        <th>Hostname</th>
+        <th>Version</th>
+        <th>Application</th>
+        <th>Error Type</th>
+        <th>Error Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of requestDetails">
+        <td>{{ item?.businessFlow }}</td>
+        <td>{{ item?.requestorSystem }}</td>
+        <td>{{ item?.targetSystem || 'N/A' }}</td>
+        <td>{{ item?.publisherSystem }}</td>
+        <td>{{ item?.exchangeMethod }}</td>
+        <td>{{ item?.createTs }}</td>
+        <td>{{ item?.logType }}</td>
+        <td>{{ item?.siTransactionKey }}</td>
+        <td>{{ item?.modTxnId }}</td>
+        <td>{{ item?.hostname }}</td>
+        <td>{{ item?.version }}</td>
+        <td>{{ item?.application }}</td>
+        <td>{{ item?.errorType || 'N/A' }}</td>
+        <td>{{ item?.errorMessage || 'N/A' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="row txn-details table-responsive my-2" *ngIf='responseDetails.length'>
+  <h3>Response Details</h3>
+  <table class='table table-bordered table-responsive'>
+    <thead class='table-dark'>
+      <tr>
+        <th>Business Flow</th>
+        <th>Requestor System</th>
+        <th>Target System</th>
+        <th>Publisher System</th>
+        <th>Exchange Method</th>
+        <th>Create Timestamp</th>
+        <th>Log Type</th>
+        <th>SI Transaction Key</th>
+        <th>Mod Txn ID</th>
+        <th>Hostname</th>
+        <th>Version</th>
+        <th>Application</th>
+        <th>Error Type</th>
+        <th>Error Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of responseDetails">
+        <td>{{ item?.businessFlow }}</td>
+        <td>{{ item?.requestorSystem }}</td>
+        <td>{{ item?.targetSystem || 'N/A' }}</td>
+        <td>{{ item?.publisherSystem }}</td>
+        <td>{{ item?.exchangeMethod }}</td>
+        <td>{{ item?.createTs }}</td>
+        <td>{{ item?.logType }}</td>
+        <td>{{ item?.siTransactionKey }}</td>
+        <td>{{ item?.modTxnId }}</td>
+        <td>{{ item?.hostname }}</td>
+        <td>{{ item?.version }}</td>
+        <td>{{ item?.application }}</td>
+        <td>{{ item?.errorType || 'N/A' }}</td>
+        <td>{{ item?.errorMessage || 'N/A' }}</td>
+      </tr>
+    </tbody>
+  </table>
 
-
-
+</div>
+<div class="row txn-details table-responsive" *ngIf='errorDetails.length'>
+  <h3>Error Details </h3>
+  <table class='table table-bordered'>
+    <thead class='table-dark'>
+      <tr>
+        <th>Business Flow</th>
+        <th>Requestor System</th>
+        <th>Target System</th>
+        <th>Publisher System</th>
+        <th>Exchange Method</th>
+        <th>Create Timestamp</th>
+        <th>Log Type</th>
+        <th>SI Transaction Key</th>
+        <th>Mod Txn ID</th>
+        <th>Hostname</th>
+        <th>Version</th>
+        <th>Application</th>
+        <th>Error Type</th>
+        <th>Error Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of errorDetails">
+        <td>{{ item?.businessFlow }}</td>
+        <td>{{ item?.requestorSystem }}</td>
+        <td>{{ item?.targetSystem || 'N/A' }}</td>
+        <td>{{ item?.publisherSystem }}</td>
+        <td>{{ item?.exchangeMethod }}</td>
+        <td>{{ item?.createTs }}</td>
+        <td>{{ item?.logType }}</td>
+        <td>{{ item?.siTransactionKey }}</td>
+        <td>{{ item?.modTxnId }}</td>
+        <td>{{ item?.hostname }}</td>
+        <td>{{ item?.version }}</td>
+        <td>{{ item?.application }}</td>
+        <td>{{ item?.errorType || 'N/A' }}</td>
+        <td>{{ item?.errorMessage || 'N/A' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 <div class="row" *ngIf='transactionResponse &&  transactionResponse.txnTraces && transactionResponse.txnTraces.length'>
   <div class="col-12" *ngIf='currentView === 1'>
     <div class="my-4 details-tile" *ngIf='transactionDetail'>
@@ -59,9 +182,9 @@
         </ng-template>
       </p-timeline>
     </div>
-    <div class="row"  *ngIf="currentView === 3">
+    <div class="row" *ngIf="currentView === 3">
       <h2> Customized Timeline View </h2>
-      <div class="col-12 d-flex">
+      <div class="col-12 d-flex justify-content-around">
         <div class="mx-4">
           <div class="details-tile-3" *ngIf='transactionDetail'>
             <ng-container *ngTemplateOutlet="cardTop"></ng-container>
@@ -102,24 +225,26 @@
 </div>
 
 <ng-template #tableView>
-  <table class='table table-responsive'>
-    <thead>
-      <tr>
-        <th>Sequence ID</th>
-        <th>Target System</th>
-        <th>Transaction Timestamp</th>
-        <th>Transaction State</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor='let trace of transactionResponse.txnTraces'>
-        <td>{{trace.txnSeqId}}</td>
-        <td>{{trace.targetSystem}}</td>
-        <td>{{trace.createTs}}</td>
-        <td>{{trace.txnState}}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="mt-2">
+    <table class='table table-responsive'>
+      <thead class='table-dark'>
+        <tr>
+          <th>Sequence ID</th>
+          <th>Target System</th>
+          <th>Transaction Timestamp</th>
+          <th>Transaction State</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor='let trace of transactionResponse.txnTraces'>
+          <td>{{trace.txnSeqId}}</td>
+          <td>{{trace.targetSystem}}</td>
+          <td>{{trace.createTs}}</td>
+          <td>{{trace.txnState}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </ng-template>
 
 <ng-template #cardTop>
@@ -170,7 +295,7 @@
       <div class="row no-gutters align-items-center">
         <div class="col mr-2">
           <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
-           Total Duration </div>
+            Total Duration </div>
           <div class="h5 mb-0 font-weight-bold text-gray-800">{{transactionDetail.txnTimeTaken}} ms</div>
         </div>
         <div class="col-auto">
@@ -180,3 +305,5 @@
     </div>
   </div>
 </ng-template>
+
+
