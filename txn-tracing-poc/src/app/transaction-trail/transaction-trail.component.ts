@@ -4,6 +4,7 @@ import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import * as dayjs from 'dayjs';
+import { ICON_MAP, MODULE_MAP } from '../app.constants';
 
 interface EventItem {
   status?: string;
@@ -25,35 +26,24 @@ type ErrorMessage = {
   styleUrls: ['./transaction-trail.component.scss'],
 })
 export class TransactionTrailComponent implements OnInit {
-  siTxnKey = '0959595a-b224-452a-a003-f3a79f321edf';
+  siTxnKey = 'ff295b78-e659-4227-a7aa-c70cb22999ab';
   errors: ErrorMessage[] = [];
   transactionResponse: any = {};
   transactionDetail: any;
-  moduleMap: Map<string, string> = new Map([
-    ['mem', 'Member'],
-    ['prv', 'Provider'],
-    ['clm', 'Claims'],
-  ]);
-  iconMap: Map<string, string> = new Map([
-    ['Req_Received', 'fa-solid fa-cloud-arrow-down'],
-    ['Schema_Validated_for_Request', 'fa-solid fa-gear'],
-    ['Business_Rules_Validated_for_Request', 'fa-solid fa-gear'],
-    ['Filter_Applied', 'fa-solid fa-gears'],
-    ['Response_Sent', 'fa-solid fa-check'],
-    ['Mask_Applied', 'fa-solid fa-square-binary'],
-    ['Response_Validated', 'fa-solid fa-check-double'],
-  ]);
+  moduleMap = MODULE_MAP;
+  iconMap = ICON_MAP;
   events: EventItem[] = [];
-  currentView: number = 1
+  currentView: number = 1;
+  showSearch = false;
   constructor(private _http: HttpClient, private _datePipe: DatePipe) {}
 
   ngOnInit(): void {}
 
   getTransactions(transactionKey: string) {
-    //return this._http.get(`https://si-dashboard-svc-si-dev.apps.oscluster01.devtest.platformgainwell.com/api/v1/si/txn_trace?txn_key=${transactionKey}`);
-    return this._http.get(
-      `http://localhost:3001/api/v1/si/dashboard/txn_trace1`
-    );
+    return this._http.get(`https://si-dashboard-svc-si-dev.apps.oscluster01.devtest.platformgainwell.com/api/v1/si/txn_trace?txn_key=${transactionKey}`);
+    // return this._http.get(
+    //   `http://localhost:3001/api/v1/si/dashboard/txn_trace1`
+    // );
   }
 
   onFindAction() {
@@ -118,7 +108,7 @@ export class TransactionTrailComponent implements OnInit {
           console.log('txnDiff' + timeTaken);
           this.transactionResponse = txnResponse;
           this.transactionDetail = {
-            module: txnResponse.txnTraces[0].siModule,
+            module: txnResponse.txnTraces[0].module,
             businessFlow: txnResponse.txnTraces[0].siBusinessFlow,
             txnKey: txnResponse.txnKey,
             txnTimeTaken: timeTaken,
@@ -131,9 +121,9 @@ export class TransactionTrailComponent implements OnInit {
     this.events = [];
     txnTraces.forEach((txn: any) => {
       this.events.push({
-        status: txn.siTxnState,
+        status: txn.txnState,
         date: this._datePipe.transform(txn.createTs, 'medium') || '',
-        icon: this.getIcon(txn.siTxnState),
+        icon: this.getIcon(txn.txnState),
         color: '#1cc88a',
         details: txn,
       });
@@ -179,5 +169,10 @@ export class TransactionTrailComponent implements OnInit {
 
   switchView(viewNo: number) {
     this.currentView = viewNo;
+  }
+
+  openSearchModal() {
+    this.showSearch = true;
+
   }
 }

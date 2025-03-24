@@ -8,10 +8,12 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { TimelineModule } from 'primeng/timeline';
 import { CardModule } from 'primeng/card';
+import { FindTxnModalComponent } from './find-txn-modal/find-txn-modal.component';
 @NgModule({
   declarations: [
     AppComponent,
-    TransactionTrailComponent
+    TransactionTrailComponent,
+    FindTxnModalComponent
   ],
   imports: [
     BrowserModule,

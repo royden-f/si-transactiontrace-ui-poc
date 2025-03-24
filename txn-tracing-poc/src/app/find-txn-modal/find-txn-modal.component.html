@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="row">
+    <div class='col-md-6'>
+      <label for="siModule" class="form-label mt-4">Module</label>
+      <select class='form-control' [id]="'siModule'" [(ngModel)]="module">
+        <option disabled selected [value]="''"> ----Select Module --- </option>
+        <option [value]="'prv'"> Provider </option>
+        <option [value]="'mem'"> Member </option>
+      </select>
+      <label for="siBusinessFlow" class="form-label mt-4">Business Flow</label>
+      <select class='form-control' [id]="'siBusinessFlow'" [(ngModel)]="businessFlow">
+        <option disabled selected [value]="''"> ----Select Business Flow --- </option>
+        <option [value]="'Create'"> Create </option>
+        <option [value]="'Inquire'"> Inquire </option>
+        <option [value]="'Update'"> Update </option>
+      </select>
+    </div>
+  </div>
+  <div class="col-md-4 mt-5 pt-1">
+    <button type="button" class="btn btn-info" (click)='onSelectTransaction()'>SELECT</button>
+  </div>
+</div>
