@@ -1,0 +1,233 @@
+<div class='col-md-12'>
+  <div class="toast-container">
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true" *ngFor="let error of errors">
+      <div class="toast-header">
+        <strong class="me-auto">{{error.title}}</strong>
+        <!-- <small>11 mins ago</small> -->
+        <button type="button" class="btn-close ms-2 mb-1" data-bs-dismiss="toast" aria-label="Close">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="toast-body">
+        {{error.message}}
+      </div>
+    </div>
+  </div>
+</div>
+<form>
+  <fieldset>
+    <legend>Transaction Traceability POC</legend>
+    <div class="row">
+      <div class='col-md-6'>
+        <label for="siTxnKey" class="form-label mt-4">SI Transaction Key</label>
+        <input type="email" class="form-control" id="siTxnKey" aria-describedby="siTxnKeyHelp"
+          placeholder="Enter SI Transaction Key" [(ngModel)]="siTxnKey" name="siTxnKey">
+      </div>
+      <div class="col-md-4 mt-5 pt-1">
+        <button type="submit" class="btn btn-info" (click)='onFindAction()'>FIND</button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+
+<div class='d-flex'>
+  <button type='button' (click)="switchView(1)" class='btn btn-link'> View 1</button>
+  <button type='button' (click)="switchView(2)" class='btn btn-link'> View 2</button>
+  <button type='button' (click)="switchView(3)" class='btn btn-link'> View 3</button>
+</div>
+
+
+
+<div class="row" *ngIf='transactionResponse &&  transactionResponse.txnTraces && transactionResponse.txnTraces.length'>
+
+  <div class="col-12" *ngIf='currentView === 1'>
+    <div class="my-4 details-tile" *ngIf='transactionDetail'>
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
+                Transaction Key</div>
+              <div class="card-body-text mb-0 font-weight-bold text-gray-800">{{transactionDetail.txnKey}}</div>
+            </div>
+            <!-- <div class="col-auto">
+              <i class="fas fa-calendar fa-2x text-gray-300"></i>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
+                Module </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800"> {{getModuleName(transactionDetail.module)}}</div>
+            </div>
+            <!-- <div class="col-auto">
+              <i class="fas fa-calendar fa-2x text-gray-300"></i>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
+                Business Flow</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">{{transactionDetail.businessFlow}}</div>
+            </div>
+            <!-- <div class="col-auto">
+              <i class="fas fa-calendar fa-2x text-gray-300"></i>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
+               Time Taken </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">{{transactionDetail.txnTimeTaken}} ms</div>
+            </div>
+            <div class="col-auto">
+              <i class="fa-solid fa-clock-rotate-left fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h2>Table View </h2>
+    <ng-container *ngTemplateOutlet="tableView"></ng-container>
+  </div>
+  <div class="d-flex flex-column">
+    <div class="col-12 mt-4" *ngIf='currentView === 2'>
+      <h2> Default Timeline View </h2>
+      <p-timeline [value]="events" [layout]="'vertical'" [align]="'left'">
+        <ng-template pTemplate="opposite" let-event>
+          <small class="text-surface-500 dark:text-surface-400">{{ event.date }}</small>
+        </ng-template>
+        <ng-template pTemplate="content" let-event>
+          {{ event.status }}
+        </ng-template>
+      </p-timeline>
+    </div>
+    <div class="row">
+      <h2> Customized Timeline View </h2>
+      <div class="col-12 d-flex">
+        <div class="mx-4">
+          <div class="details-tile-3" *ngIf='transactionDetail'>
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
+                      Transaction Key</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{transactionDetail.txnKey}}</div>
+                  </div>
+                  <!-- <div class="col-auto">
+                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
+                      Module </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"> {{getModuleName(transactionDetail.module)}}</div>
+                  </div>
+                  <!-- <div class="col-auto">
+                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
+                      Business Flow</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{transactionDetail.businessFlow}}</div>
+                  </div>
+                  <!-- <div class="col-auto">
+                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
+                     Time Taken </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{transactionDetail.txnTimeTaken}} ms</div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fa-solid fa-clock-rotate-left fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <ng-container *ngTemplateOutlet="tableView"></ng-container>
+          </div>
+        </div>
+        <div class="mt-4" *ngIf='events && currentView === 3'>
+          <p-timeline [value]="events" [align]="'left'" [layout]="'vertical'" styleClass="customized-timeline">
+            <ng-template pTemplate="marker" let-event>
+              <span class="custom-marker p-shadow-2" [style.backgroundColor]="event.color">
+                <i [ngClass]="event.icon"></i>
+              </span>
+            </ng-template>
+            <ng-template pTemplate="content" let-event>
+              <!-- <p-card [header]="event.status" [subheader]="event.date">
+                Target System: {{event.details.siTargetSystem}}
+              </p-card> -->
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{event.status}}</h5>
+                  <p class="card-text">
+                    Event Time: {{event.date}}
+                  </p>
+                  <p class="card-text">
+                    Target System: {{event.details.siTargetSystem}}
+                  </p>
+                </div>
+              </div>
+            </ng-template>
+          </p-timeline>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #tableView>
+  <table class='table table-responsive'>
+    <thead>
+      <tr>
+        <th>Sequence ID</th>
+        <th>Target System</th>
+        <th>Transaction Timestamp</th>
+        <th>Transaction State</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor='let trace of transactionResponse.txnTraces'>
+        <td>{{trace.siSeqId}}</td>
+        <td>{{trace.siTargetSystem}}</td>
+        <td>{{trace.createTs}}</td>
+        <td>{{trace.siTxnState}}</td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>
